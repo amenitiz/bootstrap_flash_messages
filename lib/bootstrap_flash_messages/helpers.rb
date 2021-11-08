@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module BootstrapFlashMessages
   module Helpers
     def flash_messages(*args)
@@ -9,27 +11,40 @@ module BootstrapFlashMessages
         simple_format = args.include?(:simple_format)
         fade = args.include?(:fade)
         fade_in = args.include?(:fade_in)
-        
+
         messages = []
         flash.each do |key, value|
           next if key == :timedout
-          
-          heading = ""
+
+          heading = ''
           if show_heading
             heading_text = I18n.t("flash_messages.headings.#{key}")
-            heading = (block ? content_tag(:h4, heading_text, :class => "alert-heading") : content_tag(:strong, heading_text))
+            heading = (if block
+                         content_tag(:h4, heading_text,
+                                     class: 'alert-heading')
+                       else
+                         content_tag(:strong, heading_text)
+                       end)
           end
-          close = ""
+          close = ''
           if show_close
-            close = content_tag(:button, raw("&times;"), :type => "button", :class => "close", "data-dismiss" => "alert", "aria-hidden" => "true")
+            close = content_tag(:button, raw('&times;'), :type => 'button', :class => 'close',
+                                                         'data-dismiss' => 'alert', 'aria-hidden' => 'true')
           end
-          
+
           value = simple_format(value) if simple_format
           value = raw(value) if unescape_html
-          
-          messages << content_tag(:div, close + heading + " " + value, :class => "alert alert-#{BootstrapFlashMessages.alert_class_mapping(key)}#{' alert-dismissable' if show_close}#{" fade#{" in" unless fade_in}" if fade || fade_in}")
+
+          messages << content_tag(:div, "#{close}#{heading} #{value}",
+                                  class: "alert alert-#{BootstrapFlashMessages.alert_class_mapping(key)}#{if show_close
+                                                                                                            ' alert-dismissable'
+                                                                                                          end}#{if fade || fade_in
+                                                                                                                  " fade#{unless fade_in
+                                                                                                                            ' in'
+                                                                                                                          end}"
+                                                                                                                end}")
         end
-        
+
         raw(messages.join)
       end
     end

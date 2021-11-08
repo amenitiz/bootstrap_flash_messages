@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module BootstrapFlashMessages
   module FlashMessages
     def redirect_to(options = {}, response_status_and_flash = {})
@@ -18,7 +20,7 @@ module BootstrapFlashMessages
       super(options, response_status_and_flash)
     end
 
-  private
+    private
 
     def flash!(*args)
       options = args.extract_options!
@@ -44,21 +46,21 @@ module BootstrapFlashMessages
       i18n_key = "flash_messages.#{params[:controller]}.#{params[:action]}.#{key}"
       i18n_default_key = "flash_messages.defaults.#{key}"
       i18n_default_action_key = "flash_messages.defaults.#{params[:action]}.#{key}"
-      i18n_key.gsub!(/\//, ".")
+      i18n_key.gsub!(%r{/}, '.')
       options = args.extract_options!
-      
+
       begin
         options[:raise] = true
-        translation = I18n.t(i18n_key, options)
+        translation = I18n.t(i18n_key, **options)
       rescue I18n::MissingTranslationData
         begin
-          translation = I18n.t(i18n_default_action_key, options)
+          translation = I18n.t(i18n_default_action_key, **options)
         rescue I18n::MissingTranslationData
           options[:raise] = false
-          translation = I18n.t(i18n_default_key, options)
+          translation = I18n.t(i18n_default_key, **options)
         end
       end
-      
+
       translation
     end
   end

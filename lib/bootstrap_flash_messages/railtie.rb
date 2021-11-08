@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 if defined?(Rails::Railtie)
   module BootstrapFlashMessages
     class Railtie < Rails::Railtie
